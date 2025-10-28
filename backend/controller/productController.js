@@ -1,27 +1,31 @@
-import Product from "../models/productModel.js"
-import HandleError from "../utils/handleError.js"
+import Product from "../models/productModel.js";
+import HandleError from "../utils/handleError.js";
+import handleAsyncError from "../middleware/handleAsyncError.js";
+
+
+// http://localhost:8000/api/v1/product/68fdd1601f17513b8d400069?keyword=shirt
 
 //1️⃣Creating Products
-export const createProducts=async(req,res)=>{
+export const createProducts=handleAsyncError(async(req,res,next)=>{
   const product =await Product.create(req.body)
   res.status(201).json({
     success:true,
     product
   })
-}
+})
 
 //2️⃣Get all the products
-export const getAllProducts=async(req,res)=>{
+export const getAllProducts=handleAsyncError(async(req,res,next)=>{
   const products=await Product.find()
   res.status(200).json({
     success:true,
     products
   })
-  } 
+  } )
 
   //3️⃣ Update Product
 
-  export const updateProduct=async(req,res,next)=>{
+  export const updateProduct=handleAsyncError(async(req,res,next)=>{
     const product=await Product.findByIdAndUpdate(req.params.id,req.body,{
       new:true,
       runValidators:true
@@ -34,11 +38,11 @@ export const getAllProducts=async(req,res)=>{
       success:true,
       product
     })
-  }
+  })
 
   //4️⃣ Delete Product
 
-  export const deleteProduct = async(req,res,next)=>{
+  export const deleteProduct = handleAsyncError(async(req,res,next)=>{
     const product=await Product.findByIdAndDelete(req.params.id)
     if(!product){
       return next(new HandleError("Product Not Found",404))
@@ -49,12 +53,12 @@ export const getAllProducts=async(req,res)=>{
       message:"Product Deleted Successfully"
     })
 
-  }
+  })
 
 
   //5️⃣ Accessing Single Product
 
-  export const getSingleProduct = async(req,res,next)=>{
+  export const getSingleProduct = handleAsyncError(async(req,res,next)=>{
     const product=await Product.findById(req.params.id);
     if(!product){
       return next(new HandleError("Product Not Found",404))
@@ -63,4 +67,4 @@ export const getAllProducts=async(req,res)=>{
       success:true,
       product
     })
-  }
+  })
